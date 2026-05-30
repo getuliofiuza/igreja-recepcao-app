@@ -100,7 +100,20 @@ function CadastroPublico() {
               Seja muito bem-vindo à nossa igreja. Que Deus abençoe sua vida e
               sua família. 🙏
             </p>
-            <button className="btn btn-primary" onClick={novoCadastro}>
+            <a
+              href="https://www.vivaparaisolem.com.br"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary"
+              style={{ width: '100%', justifyContent: 'center', marginBottom: '12px' }}
+            >
+              🌐 Conheça nossa igreja
+            </a>
+            <button
+              className="btn btn-secondary"
+              onClick={novoCadastro}
+              style={{ width: '100%', justifyContent: 'center' }}
+            >
               Fazer outro cadastro
             </button>
           </div>
