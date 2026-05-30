@@ -105,7 +105,7 @@ function Cadastro() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
         <h1>👥 Cadastro de Pessoas</h1>
         <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
-          <FiPlus /> Nova Pessoa
+          <FiPlus /> Cadastre aqui
         </button>
       </div>
 
@@ -256,7 +256,7 @@ function Cadastro() {
         <div className="card">
           <h2>Total: {pessoas.length} pessoas</h2>
           {pessoas.length === 0 ? (
-            <p style={{ marginTop: '15px', color: '#666' }}>Nenhuma pessoa cadastrada. Clique em "Nova Pessoa" para começar!</p>
+            <p style={{ marginTop: '15px', color: '#666' }}>Nenhuma pessoa cadastrada. Clique em "Cadastre aqui" para começar!</p>
           ) : (
             <div className="table-container" style={{ marginTop: '20px' }}>
               <table>
