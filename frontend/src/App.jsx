@@ -14,7 +14,7 @@ import './App.css';
 function App() {
   const [menuAberto, setMenuAberto] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
-  const appUrl = process.env.REACT_APP_URL || window.location.origin;
+  const appUrl = process.env.REACT_APP_URL || `${window.location.origin}/cadastro`;
 
   return (
     <Router>
