@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Outlet } from 'react-router-dom';
-import { FiHome, FiUsers, FiCalendar, FiBarChart2, FiPhone, FiGift, FiList, FiSquare, FiSettings } from 'react-icons/fi';
+import { BrowserRouter as Router, Routes, Route, Link, Outlet, useLocation } from 'react-router-dom';
+import { FiHome, FiUsers, FiCalendar, FiBarChart2, FiPhone, FiGift, FiSquare, FiSettings } from 'react-icons/fi';
 import Dashboard from './pages/Dashboard';
 import Cadastro from './pages/Cadastro';
 import CadastroPublico from './pages/CadastroPublico';
@@ -12,63 +12,49 @@ import Configuracoes from './pages/Configuracoes';
 import QRCodeModal from './components/QRCodeModal';
 import './App.css';
 
+// Itens do menu lateral (área administrativa)
+const itensMenu = [
+  { to: '/', icon: <FiHome />, label: 'Dashboard' },
+  { to: '/pessoas', icon: <FiUsers />, label: 'Cadastros' },
+  { to: '/presencas', icon: <FiCalendar />, label: 'Presenças' },
+  { to: '/visitantes', icon: <FiBarChart2 />, label: 'Visitantes' },
+  { to: '/contatos', icon: <FiPhone />, label: 'Contatos' },
+  { to: '/aniversariantes', icon: <FiGift />, label: 'Aniversariantes' },
+  { to: '/configuracoes', icon: <FiSettings />, label: 'Configurações' }
+];
+
 // Área administrativa (com menu lateral). Usada por você e pela equipe da igreja.
 function AdminLayout() {
   const [menuAberto, setMenuAberto] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
+  const location = useLocation();
+
   // QR Code aponta para a página pública de cadastro
   const appUrl = process.env.REACT_APP_URL || `${window.location.origin}/cadastro`;
+
+  // Título dinâmico: muda conforme a página atual
+  const itemAtual = itensMenu.find((item) => item.to === location.pathname);
+  const tituloPagina = itemAtual ? itemAtual.label : 'Recepção';
+
+  const fecharMenu = () => setMenuAberto(false);
 
   return (
     <div className="app-container">
       {/* Sidebar */}
-      <nav className="sidebar">
+      <nav className={`sidebar ${menuAberto ? 'open' : ''}`}>
         <div className="logo-section">
           <h1>🏰 Igreja</h1>
           <p>Recepção</p>
         </div>
 
         <ul className="menu">
-          <li>
-            <Link to="/" className="menu-item">
-              <FiHome /> Dashboard
-            </Link>
-          </li>
-          <li>
-            <Link to="/pessoas" className="menu-item">
-              <FiUsers /> Cadastros
-            </Link>
-          </li>
-          <li>
-            <Link to="/presencas" className="menu-item">
-              <FiCalendar /> Presenças
-            </Link>
-          </li>
-          <li>
-            <Link to="/visitantes" className="menu-item">
-              <FiBarChart2 /> Visitantes
-            </Link>
-          </li>
-          <li>
-            <Link to="/contatos" className="menu-item">
-              <FiPhone /> Contatos
-            </Link>
-          </li>
-          <li>
-            <Link to="/aniversariantes" className="menu-item">
-              <FiGift /> Aniversariantes
-            </Link>
-          </li>
-          <li>
-            <Link to="/listas" className="menu-item">
-              <FiList /> Listas
-            </Link>
-          </li>
-          <li>
-            <Link to="/configuracoes" className="menu-item">
-              <FiSettings /> Configurações
-            </Link>
-          </li>
+          {itensMenu.map((item) => (
+            <li key={item.to}>
+              <Link to={item.to} className="menu-item" onClick={fecharMenu}>
+                {item.icon} {item.label}
+              </Link>
+            </li>
+          ))}
         </ul>
 
         <div className="sidebar-footer">
@@ -76,10 +62,13 @@ function AdminLayout() {
         </div>
       </nav>
 
+      {/* Fundo escuro que aparece atrás do menu no celular; fecha o menu ao tocar */}
+      {menuAberto && <div className="sidebar-overlay" onClick={fecharMenu} />}
+
       {/* Main Content */}
       <main className="main-content">
         <header className="header">
-          <h2 id="page-title">Dashboard</h2>
+          <h2 id="page-title">{tituloPagina}</h2>
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             <button
               className="btn btn-primary"
