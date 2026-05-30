@@ -114,6 +114,50 @@ app.post('/api/presencas', async (req, res) => {
   }
 });
 
+// POST - Registrar presença de várias pessoas de uma só vez (lote)
+app.post('/api/presencas/lote', async (req, res) => {
+  try {
+    const { pessoaIds, data, evento, observacoes } = req.body;
+
+    if (!Array.isArray(pessoaIds) || pessoaIds.length === 0) {
+      return res.status(400).json({ error: 'Selecione ao menos uma pessoa.' });
+    }
+
+    const dataPresenca = new Date(data);
+    const batch = db.batch();
+
+    pessoaIds.forEach((pessoaId) => {
+      const ref = db.collection('presencas').doc();
+      batch.set(ref, {
+        pessoaId,
+        data: dataPresenca,
+        evento: evento || 'Culto',
+        observacoes: observacoes || '',
+        criadoEm: new Date()
+      });
+    });
+
+    await batch.commit();
+    res.json({ message: 'Presenças registradas com sucesso', total: pessoaIds.length });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET - Listar TODAS as presenças (usado nos relatórios)
+app.get('/api/presencas', async (req, res) => {
+  try {
+    const snapshot = await db.collection('presencas').get();
+    const presencas = [];
+    snapshot.forEach((doc) => {
+      presencas.push({ id: doc.id, ...doc.data() });
+    });
+    res.json(presencas);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // ==================== ROUTES VISITANTES ====================
 // POST - Converter visitante em membro
 app.post('/api/visitantes/:pessoaId/converter', async (req, res) => {

@@ -5,7 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Cadastro from './pages/Cadastro';
 import CadastroPublico from './pages/CadastroPublico';
 import Presencas from './pages/Presencas';
-import Visitantes from './pages/Visitantes';
+import Relatorios from './pages/Relatorios';
 import Contatos from './pages/Contatos';
 import Aniversariantes from './pages/Aniversariantes';
 import Configuracoes from './pages/Configuracoes';
@@ -17,7 +17,7 @@ const itensMenu = [
   { to: '/', icon: <FiHome />, label: 'Dashboard' },
   { to: '/pessoas', icon: <FiUsers />, label: 'Cadastros' },
   { to: '/presencas', icon: <FiCalendar />, label: 'Presenças' },
-  { to: '/visitantes', icon: <FiBarChart2 />, label: 'Visitantes' },
+  { to: '/relatorios', icon: <FiBarChart2 />, label: 'Relatórios' },
   { to: '/contatos', icon: <FiPhone />, label: 'Contatos' },
   { to: '/aniversariantes', icon: <FiGift />, label: 'Aniversariantes' },
   { to: '/configuracoes', icon: <FiSettings />, label: 'Configurações' }
@@ -110,7 +110,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/pessoas" element={<Cadastro />} />
           <Route path="/presencas" element={<Presencas />} />
-          <Route path="/visitantes" element={<Visitantes />} />
+          <Route path="/relatorios" element={<Relatorios />} />
           <Route path="/contatos" element={<Contatos />} />
           <Route path="/aniversariantes" element={<Aniversariantes />} />
           <Route path="/configuracoes" element={<Configuracoes />} />

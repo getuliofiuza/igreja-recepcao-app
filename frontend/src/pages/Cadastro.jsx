@@ -16,6 +16,8 @@ function Cadastro() {
     estadoCivil: '',
     telefone: '',
     email: '',
+    cep: '',
+    cidade: '',
     bairro: '',
     tipoPessoa: 'Visitante',
     batizado: false,
@@ -44,6 +46,25 @@ function Cadastro() {
       ...formData,
       [name]: type === 'checkbox' ? checked : value
     });
+  };
+
+  // Busca o endereço automaticamente pelo CEP (API pública ViaCEP)
+  const buscarCep = async (cepValor) => {
+    const cepLimpo = (cepValor || '').replace(/\D/g, '');
+    if (cepLimpo.length !== 8) return;
+    try {
+      const resp = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+      const dados = await resp.json();
+      if (!dados.erro) {
+        setFormData((prev) => ({
+          ...prev,
+          cidade: dados.localidade || prev.cidade,
+          bairro: dados.bairro || prev.bairro
+        }));
+      }
+    } catch (error) {
+      console.error('Erro ao buscar CEP:', error);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -91,6 +112,8 @@ function Cadastro() {
       estadoCivil: '',
       telefone: '',
       email: '',
+      cep: '',
+      cidade: '',
       bairro: '',
       tipoPessoa: 'Visitante',
       batizado: false,
@@ -174,6 +197,29 @@ function Cadastro() {
                   type="email"
                   name="email"
                   value={formData.email}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>CEP</label>
+                <input
+                  type="text"
+                  name="cep"
+                  value={formData.cep}
+                  onChange={handleInputChange}
+                  onBlur={(e) => buscarCep(e.target.value)}
+                  placeholder="00000-000 (preenche cidade automático)"
+                />
+              </div>
+              <div className="form-group">
+                <label>Cidade</label>
+                <input
+                  type="text"
+                  name="cidade"
+                  value={formData.cidade}
                   onChange={handleInputChange}
                 />
               </div>
@@ -265,6 +311,7 @@ function Cadastro() {
                     <th>Nome</th>
                     <th>Telefone</th>
                     <th>Tipo</th>
+                    <th>Cidade</th>
                     <th>Bairro</th>
                     <th>Ações</th>
                   </tr>
@@ -285,6 +332,7 @@ function Cadastro() {
                           {pessoa.tipoPessoa}
                         </span>
                       </td>
+                      <td>{pessoa.cidade || '-'}</td>
                       <td>{pessoa.bairro || '-'}</td>
                       <td>
                         <button

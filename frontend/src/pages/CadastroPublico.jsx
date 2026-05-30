@@ -10,6 +10,8 @@ const formInicial = {
   estadoCivil: '',
   telefone: '',
   email: '',
+  cep: '',
+  cidade: '',
   bairro: '',
   tipoPessoa: 'Visitante',
   batizado: false,
@@ -28,6 +30,25 @@ function CadastroPublico() {
       ...formData,
       [name]: type === 'checkbox' ? checked : value
     });
+  };
+
+  // Busca o endereço automaticamente pelo CEP (API pública ViaCEP)
+  const buscarCep = async (cepValor) => {
+    const cepLimpo = (cepValor || '').replace(/\D/g, '');
+    if (cepLimpo.length !== 8) return;
+    try {
+      const resp = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+      const dados = await resp.json();
+      if (!dados.erro) {
+        setFormData((prev) => ({
+          ...prev,
+          cidade: dados.localidade || prev.cidade,
+          bairro: dados.bairro || prev.bairro
+        }));
+      }
+    } catch (error) {
+      console.error('Erro ao buscar CEP:', error);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -74,9 +95,10 @@ function CadastroPublico() {
         {enviado ? (
           <div className="card" style={{ textAlign: 'center', padding: '48px 32px' }}>
             <div style={{ fontSize: '60px' }}>🎉</div>
-            <h2 style={{ margin: '16px 0 10px' }}>Cadastro realizado!</h2>
-            <p style={{ color: '#666', marginBottom: '28px' }}>
-              Que alegria ter você com a gente. Seja muito bem-vindo(a)! 🙏
+            <h2 style={{ margin: '16px 0 10px' }}>Cadastro concluído!</h2>
+            <p style={{ color: '#666', marginBottom: '28px', lineHeight: 1.5 }}>
+              Seja muito bem-vindo à nossa igreja. Que Deus abençoe sua vida e
+              sua família. 🙏
             </p>
             <button className="btn btn-primary" onClick={novoCadastro}>
               Fazer outro cadastro
@@ -146,6 +168,29 @@ function CadastroPublico() {
                     type="email"
                     name="email"
                     value={formData.email}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>CEP</label>
+                  <input
+                    type="text"
+                    name="cep"
+                    value={formData.cep}
+                    onChange={handleInputChange}
+                    onBlur={(e) => buscarCep(e.target.value)}
+                    placeholder="00000-000 (preenche cidade automático)"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Cidade</label>
+                  <input
+                    type="text"
+                    name="cidade"
+                    value={formData.cidade}
                     onChange={handleInputChange}
                   />
                 </div>

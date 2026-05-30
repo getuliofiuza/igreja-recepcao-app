@@ -4,6 +4,14 @@ import { FiPlus, FiPhone } from 'react-icons/fi';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
+// Converte datas do Firestore ({_seconds}) ou strings ISO em objeto Date
+const toDate = (v) => {
+  if (!v) return null;
+  if (typeof v === 'object' && v._seconds != null) return new Date(v._seconds * 1000);
+  const d = new Date(v);
+  return isNaN(d.getTime()) ? null : d;
+};
+
 function Contatos() {
   const [pessoas, setPessoas] = useState([]);
   const [contatos, setContatos] = useState([]);
@@ -60,11 +68,23 @@ function Contatos() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '12px' }}>
         <h1><FiPhone /> Log de Contatos</h1>
         <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
           <FiPlus /> Novo Contato
         </button>
+      </div>
+
+      <div className="card" style={{ marginBottom: '24px', background: '#f8f9ff', borderLeft: '4px solid #667eea' }}>
+        <p style={{ color: '#444', lineHeight: 1.6, margin: 0 }}>
+          📌 <strong>O que é o Log de Contatos?</strong> É o registro do
+          acompanhamento pastoral. Sempre que alguém da equipe entra em contato
+          com uma pessoa (WhatsApp, telefone, e-mail ou visita), o contato é
+          anotado aqui com a data do próximo retorno. Assim ninguém é esquecido
+          e a igreja consegue cuidar de cada pessoa. Abaixo aparecem os contatos
+          <strong> pendentes</strong>, já com o <strong>telefone</strong> e o
+          <strong> e-mail</strong> de cada pessoa para facilitar o retorno.
+        </p>
       </div>
 
       {loading ? (
@@ -151,6 +171,8 @@ function Contatos() {
                   <thead>
                     <tr>
                       <th>Pessoa</th>
+                      <th>Telefone</th>
+                      <th>E-mail</th>
                       <th>Tipo</th>
                       <th>Descrição</th>
                       <th>Próximo Contato</th>
@@ -163,9 +185,11 @@ function Contatos() {
                       return (
                         <tr key={contato.id}>
                           <td><strong>{pessoa?.nomeCompleto || 'Desconhecido'}</strong></td>
+                          <td>{pessoa?.telefone || '-'}</td>
+                          <td>{pessoa?.email || '-'}</td>
                           <td>{contato.tipo}</td>
                           <td>{contato.descricao}</td>
-                          <td>{contato.proximoContato ? new Date(contato.proximoContato).toLocaleDateString('pt-BR') : '-'}</td>
+                          <td>{toDate(contato.proximoContato) ? toDate(contato.proximoContato).toLocaleDateString('pt-BR') : '-'}</td>
                           <td>
                             <span style={{
                               padding: '4px 12px',
